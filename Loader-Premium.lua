@@ -1,7 +1,7 @@
 --[[
-    Arqel Key System — Promers-Style Build
+    Arqel Key System — Promers-Style Build (Cleaned & Aligned)
     Original by Cobru (Cobruhehe, .cobru)
-    UI restyled to match Promers Hub (monochrome white/grey aesthetic)
+    UI restyled and aligned to match Promers Hub perfectly
     License: MIT
 ]]
 
@@ -206,9 +206,7 @@ end
 
 local fileSystemSupported = hasFileSystem()
 
-local function getFileName()
-    return FolderName .. "/" .. Arqel.Storage.FileName .. ".txt"
-end
+local function getFileName() return FolderName .. "/" .. Arqel.Storage.FileName .. ".txt" end
 
 local function saveKey(key)
     if not fileSystemSupported or not Arqel.Storage.Remember then return false end
@@ -234,22 +232,16 @@ local function ensureFolders()
     if not fileSystemSupported then return false end
     pcall(function()
         if not isfolder(FolderName) then makefolder(FolderName) end
-        if not isfolder(FolderName .. "/" .. IconsFolder) then
-            makefolder(FolderName .. "/" .. IconsFolder)
-        end
+        if not isfolder(FolderName .. "/" .. IconsFolder) then makefolder(FolderName .. "/" .. IconsFolder) end
     end)
     return true
 end
 
-local function getIconPath(iconName)
-    return FolderName .. "/" .. IconsFolder .. "/" .. IconFiles[iconName]
-end
+local function getIconPath(iconName) return FolderName .. "/" .. IconsFolder .. "/" .. IconFiles[iconName] end
 
 local function isIconCached(iconName)
     if not fileSystemSupported then return false end
-    local success, result = pcall(function()
-        return isfile(getIconPath(iconName))
-    end)
+    local success, result = pcall(function() return isfile(getIconPath(iconName)) end)
     return success and result
 end
 
@@ -260,9 +252,7 @@ local function downloadIcon(iconName)
     end
     local path = getIconPath(iconName)
     if isIconCached(iconName) then
-        local success = pcall(function()
-            CachedIcons[iconName] = getcustomasset(path)
-        end)
+        local success = pcall(function() CachedIcons[iconName] = getcustomasset(path) end)
         if success then return true end
     end
     local success = pcall(function()
@@ -271,38 +261,23 @@ local function downloadIcon(iconName)
         writefile(path, response)
         CachedIcons[iconName] = getcustomasset(path)
     end)
-    if not success then
-        CachedIcons[iconName] = FallbackIcons[iconName]
-    end
+    if not success then CachedIcons[iconName] = FallbackIcons[iconName] end
     return success
 end
 
-local function getIcon(iconName)
-    return CachedIcons[iconName] or FallbackIcons[iconName]
-end
-
+local function getIcon(iconName) return CachedIcons[iconName] or FallbackIcons[iconName] end
 local function getLogoIcon()
     if Arqel.Appearance.Icon == DefaultLogoAsset then return getIcon("logo") end
     return Arqel.Appearance.Icon
 end
 
-local function shouldDownloadLogo()
-    return Arqel.Appearance.Icon == DefaultLogoAsset
-end
-
-local function getShopIcon()
-    if Arqel.Shop.Icon == "" then return getLogoIcon() end
-    return Arqel.Shop.Icon
-end
-
-local function isShopEnabled()
-    return Arqel.Shop.Enabled
-end
+local function shouldDownloadLogo() return Arqel.Appearance.Icon == DefaultLogoAsset end
+local function getShopIcon() if Arqel.Shop.Icon == "" then return getLogoIcon() end return Arqel.Shop.Icon end
+local function isShopEnabled() return Arqel.Shop.Enabled end
 
 local function allIconsCached()
     if not fileSystemSupported then return false end
-    local iconNames = {"key", "shield", "check", "copy", "discord", "alert", "lock",
-                       "loading", "close", "changelog", "user", "clock", "cart", "nogetkey"}
+    local iconNames = {"key", "shield", "check", "copy", "discord", "alert", "lock", "loading", "close", "changelog", "user", "clock", "cart", "nogetkey"}
     if shouldDownloadLogo() then table.insert(iconNames, "logo") end
     for _, name in ipairs(iconNames) do
         if not isIconCached(name) then return false end
@@ -312,8 +287,7 @@ end
 
 local function loadAllIconsFromCache()
     ensureFolders()
-    local iconNames = {"key", "shield", "check", "copy", "discord", "alert", "lock",
-                       "loading", "close", "changelog", "user", "clock", "cart", "nogetkey"}
+    local iconNames = {"key", "shield", "check", "copy", "discord", "alert", "lock", "loading", "close", "changelog", "user", "clock", "cart", "nogetkey"}
     if shouldDownloadLogo() then table.insert(iconNames, "logo") end
     for _, name in ipairs(iconNames) do downloadIcon(name) end
     Internal.IconsLoaded = true
@@ -326,9 +300,7 @@ local function getExecutorName()
 end
 
 local function getDeviceType()
-    local touch    = UserInputService.TouchEnabled
-    local keyboard = UserInputService.KeyboardEnabled
-    local gamepad  = UserInputService.GamepadEnabled
+    local touch, keyboard, gamepad = UserInputService.TouchEnabled, UserInputService.KeyboardEnabled, UserInputService.GamepadEnabled
     if gamepad and not keyboard and not touch then return "Console"
     elseif touch and not keyboard then return "Mobile"
     elseif keyboard and touch then return "PC & Touch"
@@ -339,12 +311,8 @@ end
 local function getHWID()
     local hwid = nil
     pcall(function() if gethwid then hwid = gethwid() end end)
-    if not hwid then
-        pcall(function() if getgenv().HWID then hwid = getgenv().HWID end end)
-    end
-    if not hwid then
-        pcall(function() if game.RobloxHWID then hwid = tostring(game.RobloxHWID) end end)
-    end
+    if not hwid then pcall(function() if getgenv().HWID then hwid = getgenv().HWID end end) end
+    if not hwid then pcall(function() if game.RobloxHWID then hwid = tostring(game.RobloxHWID) end end) end
     if not hwid then
         local player = cloneref(Players.LocalPlayer)
         hwid = HttpService:GenerateGUID(false):gsub("-", ""):sub(1, 32)
@@ -362,8 +330,7 @@ end
 
 local function formatTime12()
     local hour = tonumber(os.date("%H"))
-    local min  = os.date("%M")
-    local sec  = os.date("%S")
+    local min, sec = os.date("%M"), os.date("%S")
     local period = "AM"
     if hour >= 12 then period = "PM" end
     if hour > 12 then hour = hour - 12 end
@@ -371,9 +338,7 @@ local function formatTime12()
     return string.format("%d:%s:%s %s", hour, min, sec, period)
 end
 
-local function formatDate()
-    return os.date("%b %d, %Y")
-end
+local function formatDate() return os.date("%b %d, %Y") end
 
 local function enableBlur()
     if not Arqel.Options.Blur then return end
@@ -383,16 +348,12 @@ local function enableBlur()
     Internal.BlurEffect.Name   = "ArqelKeySystemBlur"
     Internal.BlurEffect.Size   = 0
     Internal.BlurEffect.Parent = Lighting
-    TweenService:Create(Internal.BlurEffect,
-        TweenInfo.new(0.4, Enum.EasingStyle.Quart),
-        { Size = 24 }):Play()
+    TweenService:Create(Internal.BlurEffect, TweenInfo.new(0.4, Enum.EasingStyle.Quart), { Size = 24 }):Play()
 end
 
 local function disableBlur()
     if Internal.BlurEffect and Internal.BlurEffect.Parent then
-        TweenService:Create(Internal.BlurEffect,
-            TweenInfo.new(0.3, Enum.EasingStyle.Quart),
-            { Size = 0 }):Play()
+        TweenService:Create(Internal.BlurEffect, TweenInfo.new(0.3, Enum.EasingStyle.Quart), { Size = 0 }):Play()
         task.delay(0.3, function()
             if Internal.BlurEffect and Internal.BlurEffect.Parent then
                 Internal.BlurEffect:Destroy()
@@ -421,10 +382,8 @@ end
 local function setupDragging(header, main)
     if not Arqel.Options.Draggable then return end
     local dragging, dragStart, startPos, dragInput
-
     header.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1
-           or input.UserInputType == Enum.UserInputType.Touch then
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
             startPos = main.Position
@@ -436,18 +395,15 @@ local function setupDragging(header, main)
             end)
         end
     end)
-
     UserInputService.InputChanged:Connect(function(input)
         if not dragging or not dragInput then return end
         if input.UserInputType == Enum.UserInputType.MouseMovement then
             local delta = input.Position - dragStart
-            main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
-                                      startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         elseif input.UserInputType == Enum.UserInputType.Touch then
             if input == dragInput then
                 local delta = input.Position - dragStart
-                main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
-                                          startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+                main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
             end
         end
     end)
@@ -508,15 +464,10 @@ local function CreateDoorOverlay(parentFrame, width, height)
     local halfWidth = math.ceil(width / 2)
 
     local function openDoors(callback)
-        TweenService:Create(logoImage, TweenInfo.new(0.2, Enum.EasingStyle.Quart),
-            { ImageTransparency = 1 }):Play()
+        TweenService:Create(logoImage, TweenInfo.new(0.2, Enum.EasingStyle.Quart), { ImageTransparency = 1 }):Play()
         task.wait(0.25)
-        TweenService:Create(leftDoor,
-            TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
-            { Position = UDim2.new(0, -halfWidth, 0, 0) }):Play()
-        TweenService:Create(rightDoor,
-            TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
-            { Position = UDim2.new(1, 0, 0, 0) }):Play()
+        TweenService:Create(leftDoor, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.In), { Position = UDim2.new(0, -halfWidth, 0, 0) }):Play()
+        TweenService:Create(rightDoor, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.In), { Position = UDim2.new(1, 0, 0, 0) }):Play()
         task.wait(0.45)
         overlay.Visible = false
         if callback then callback() end
@@ -527,16 +478,10 @@ local function CreateDoorOverlay(parentFrame, width, height)
         leftDoor.Position  = UDim2.new(0, -halfWidth, 0, 0)
         rightDoor.Position = UDim2.new(1, 0, 0, 0)
         logoImage.ImageTransparency = 1
-        TweenService:Create(leftDoor,
-            TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
-            { Position = UDim2.new(0, 0, 0, 0) }):Play()
-        TweenService:Create(rightDoor,
-            TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
-            { Position = UDim2.new(0.5, 0, 0, 0) }):Play()
+        TweenService:Create(leftDoor, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), { Position = UDim2.new(0, 0, 0, 0) }):Play()
+        TweenService:Create(rightDoor, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), { Position = UDim2.new(0.5, 0, 0, 0) }):Play()
         task.wait(0.38)
-        TweenService:Create(logoImage,
-            TweenInfo.new(0.25, Enum.EasingStyle.Quart),
-            { ImageTransparency = 0 }):Play()
+        TweenService:Create(logoImage, TweenInfo.new(0.25, Enum.EasingStyle.Quart), { ImageTransparency = 0 }):Play()
         task.wait(0.3)
         if callback then callback() end
     end
@@ -664,8 +609,7 @@ local function ShowLoadingScreen(onComplete)
     phasesLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
     local phases = {}
-    local phaseNames = {"Initializing", "Creating folders", "Downloading assets",
-                        "Preparing interface", "Ready"}
+    local phaseNames = {"Initializing", "Creating folders", "Downloading assets", "Preparing interface", "Ready"}
     local phaseTextSize = mobile and 14 or 18
 
     for i, name in ipairs(phaseNames) do
@@ -711,10 +655,7 @@ local function ShowLoadingScreen(onComplete)
                 task.spawn(function()
                     line.Position = UDim2.new(1.3, 0, linePositions[i], 0)
                     line.BackgroundTransparency = 0.5
-                    TweenService:Create(line,
-                        TweenInfo.new(speeds[i], Enum.EasingStyle.Linear),
-                        { Position = UDim2.new(-0.4, 0, linePositions[i], 0),
-                          BackgroundTransparency = 0.9 }):Play()
+                    TweenService:Create(line, TweenInfo.new(speeds[i], Enum.EasingStyle.Linear), { Position = UDim2.new(-0.4, 0, linePositions[i], 0), BackgroundTransparency = 0.9 }):Play()
                 end)
             end
             task.wait(0.5)
@@ -725,10 +666,7 @@ local function ShowLoadingScreen(onComplete)
         while animationRunning do
             for _, trail in ipairs(trails) do
                 local newWidth = trail.config.width + math.random(-12, 12)
-                TweenService:Create(trail.frame,
-                    TweenInfo.new(0.12, Enum.EasingStyle.Quad),
-                    { Size = UDim2.new(0, newWidth, 0, mobile and 2 or 3),
-                      BackgroundTransparency = 0.1 + math.random() * 0.3 }):Play()
+                TweenService:Create(trail.frame, TweenInfo.new(0.12, Enum.EasingStyle.Quad), { Size = UDim2.new(0, newWidth, 0, mobile and 2 or 3), BackgroundTransparency = 0.1 + math.random() * 0.3 }):Play()
             end
             task.wait(0.1)
         end
@@ -737,10 +675,7 @@ local function ShowLoadingScreen(onComplete)
     local function animateShipShake()
         while animationRunning do
             local shakeAmount = mobile and 2 or 3
-            TweenService:Create(shipContainer,
-                TweenInfo.new(0.04, Enum.EasingStyle.Linear),
-                { Position = UDim2.new(0.5, math.random(-shakeAmount, shakeAmount),
-                                      0.35, math.random(-1, 1)) }):Play()
+            TweenService:Create(shipContainer, TweenInfo.new(0.04, Enum.EasingStyle.Linear), { Position = UDim2.new(0.5, math.random(-shakeAmount, shakeAmount), 0.35, math.random(-1, 1)) }):Play()
             task.wait(0.04)
         end
     end
@@ -751,26 +686,20 @@ local function ShowLoadingScreen(onComplete)
             local p = phases[i]
             if i < num then
                 p.indicator.Text = "●"
-                TweenService:Create(p.indicator, TweenInfo.new(0.2),
-                    { TextColor3 = Arqel.Theme.Success, TextTransparency = 0 }):Play()
-                TweenService:Create(p.label, TweenInfo.new(0.2),
-                    { TextColor3 = Arqel.Theme.Success }):Play()
+                TweenService:Create(p.indicator, TweenInfo.new(0.2), { TextColor3 = Arqel.Theme.Success, TextTransparency = 0 }):Play()
+                TweenService:Create(p.label, TweenInfo.new(0.2), { TextColor3 = Arqel.Theme.Success }):Play()
             elseif i == num then
                 p.indicator.Text = "●"
                 p.indicator.TextTransparency = 0
-                TweenService:Create(p.indicator, TweenInfo.new(0.2),
-                    { TextColor3 = Arqel.Theme.Accent }):Play()
-                TweenService:Create(p.label, TweenInfo.new(0.2),
-                    { TextColor3 = Arqel.Theme.Text }):Play()
+                TweenService:Create(p.indicator, TweenInfo.new(0.2), { TextColor3 = Arqel.Theme.Accent }):Play()
+                TweenService:Create(p.label, TweenInfo.new(0.2), { TextColor3 = Arqel.Theme.Text }):Play()
                 currentPhase = num
                 pulseThread = task.spawn(function()
                     while currentPhase == num do
-                        TweenService:Create(p.indicator, TweenInfo.new(0.4),
-                            { TextTransparency = 0.5 }):Play()
+                        TweenService:Create(p.indicator, TweenInfo.new(0.4), { TextTransparency = 0.5 }):Play()
                         task.wait(0.4)
                         if currentPhase ~= num then break end
-                        TweenService:Create(p.indicator, TweenInfo.new(0.4),
-                            { TextTransparency = 0 }):Play()
+                        TweenService:Create(p.indicator, TweenInfo.new(0.4), { TextTransparency = 0 }):Play()
                         task.wait(0.4)
                     end
                 end)
@@ -784,71 +713,44 @@ local function ShowLoadingScreen(onComplete)
 
     task.spawn(function()
         TweenService:Create(blurEffect, TweenInfo.new(0.6), { Size = 24 }):Play()
-        TweenService:Create(loadingScreen, TweenInfo.new(0.5),
-            { BackgroundTransparency = 0.25 }):Play()
+        TweenService:Create(loadingScreen, TweenInfo.new(0.5), { BackgroundTransparency = 0.25 }):Play()
         task.wait(0.3)
-
-        TweenService:Create(shipBody,
-            TweenInfo.new(0.4, Enum.EasingStyle.Back),
-            { BackgroundTransparency = 0 }):Play()
-        TweenService:Create(shipPoint,
-            TweenInfo.new(0.4, Enum.EasingStyle.Back),
-            { BackgroundTransparency = 0 }):Play()
-
+        TweenService:Create(shipBody, TweenInfo.new(0.4, Enum.EasingStyle.Back), { BackgroundTransparency = 0 }):Play()
+        TweenService:Create(shipPoint, TweenInfo.new(0.4, Enum.EasingStyle.Back), { BackgroundTransparency = 0 }):Play()
         task.spawn(animateLongLines)
         task.spawn(animateTrails)
         task.spawn(animateShipShake)
         task.wait(0.2)
-
         for i = 1, 5 do
             task.delay((i - 1) * 0.08, function()
-                TweenService:Create(phases[i].indicator, TweenInfo.new(0.25),
-                    { TextTransparency = 0 }):Play()
-                TweenService:Create(phases[i].label, TweenInfo.new(0.25),
-                    { TextTransparency = 0 }):Play()
+                TweenService:Create(phases[i].indicator, TweenInfo.new(0.25), { TextTransparency = 0 }):Play()
+                TweenService:Create(phases[i].label, TweenInfo.new(0.25), { TextTransparency = 0 }):Play()
             end)
         end
         task.wait(0.5)
-
         setPhase(1); task.wait(0.3)
         setPhase(2); ensureFolders()
         task.wait(0.25)
         setPhase(3)
-
-        local iconNames = {"key", "shield", "check", "copy", "discord", "alert", "lock",
-                           "loading", "close", "changelog", "user", "clock", "cart", "nogetkey"}
+        local iconNames = {"key", "shield", "check", "copy", "discord", "alert", "lock", "loading", "close", "changelog", "user", "clock", "cart", "nogetkey"}
         if shouldDownloadLogo() then table.insert(iconNames, "logo") end
         for _, name in ipairs(iconNames) do
             downloadIcon(name)
             task.wait(0.06)
         end
         Internal.IconsLoaded = true
-
         setPhase(4); task.wait(0.25)
         setPhase(5); task.wait(0.5)
-
         animationRunning = false
         if pulseThread then task.cancel(pulseThread) end
-
-        TweenService:Create(loadingScreen, TweenInfo.new(0.5),
-            { BackgroundTransparency = 1 }):Play()
-        TweenService:Create(shipBody, TweenInfo.new(0.3),
-            { BackgroundTransparency = 1 }):Play()
-        TweenService:Create(shipPoint, TweenInfo.new(0.3),
-            { BackgroundTransparency = 1 }):Play()
-        for _, trail in pairs(trails) do
-            TweenService:Create(trail.frame, TweenInfo.new(0.3),
-                { BackgroundTransparency = 1 }):Play()
-        end
-        for _, line in pairs(longLines) do
-            TweenService:Create(line, TweenInfo.new(0.3),
-                { BackgroundTransparency = 1 }):Play()
-        end
+        TweenService:Create(loadingScreen, TweenInfo.new(0.5), { BackgroundTransparency = 1 }):Play()
+        TweenService:Create(shipBody, TweenInfo.new(0.3), { BackgroundTransparency = 1 }):Play()
+        TweenService:Create(shipPoint, TweenInfo.new(0.3), { BackgroundTransparency = 1 }):Play()
+        for _, trail in pairs(trails) do TweenService:Create(trail.frame, TweenInfo.new(0.3), { BackgroundTransparency = 1 }):Play() end
+        for _, line in pairs(longLines) do TweenService:Create(line, TweenInfo.new(0.3), { BackgroundTransparency = 1 }):Play() end
         for i = 1, 5 do
-            TweenService:Create(phases[i].indicator, TweenInfo.new(0.25),
-                { TextTransparency = 1 }):Play()
-            TweenService:Create(phases[i].label, TweenInfo.new(0.25),
-                { TextTransparency = 1 }):Play()
+            TweenService:Create(phases[i].indicator, TweenInfo.new(0.25), { TextTransparency = 1 }):Play()
+            TweenService:Create(phases[i].label, TweenInfo.new(0.25), { TextTransparency = 1 }):Play()
         end
         TweenService:Create(blurEffect, TweenInfo.new(0.3), { Size = 0 }):Play()
         task.wait(0.5)
@@ -977,16 +879,13 @@ function Arqel:Notify(title, message, duration, iconType)
         for i = #Internal.NotificationList, 1, -1 do
             local n = Internal.NotificationList[i]
             if n and n.frame and n.frame.Parent then
-                TweenService:Create(n.frame,
-                    TweenInfo.new(0.3, Enum.EasingStyle.Quart),
-                    { Position = UDim2.new(1, -15, 1, -15 - yOffset) }):Play()
+                TweenService:Create(n.frame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), { Position = UDim2.new(1, -15, 1, -15 - yOffset) }):Play()
                 yOffset = yOffset + n.height + 12
             end
         end
     end
 
-    TweenService:Create(frame, TweenInfo.new(0.4, Enum.EasingStyle.Quart),
-        { Position = UDim2.new(1, -15, 1, -15) }):Play()
+    TweenService:Create(frame, TweenInfo.new(0.4, Enum.EasingStyle.Quart), { Position = UDim2.new(1, -15, 1, -15) }):Play()
     task.wait(0.1)
     restack()
 
@@ -994,18 +893,13 @@ function Arqel:Notify(title, message, duration, iconType)
         for i, n in ipairs(Internal.NotificationList) do
             if n.id == id then table.remove(Internal.NotificationList, i); break end
         end
-        TweenService:Create(frame,
-            TweenInfo.new(0.3, Enum.EasingStyle.Quart),
-            { Position = UDim2.new(1, width + 20, frame.Position.Y.Scale,
-                                   frame.Position.Y.Offset) }):Play()
+        TweenService:Create(frame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), { Position = UDim2.new(1, width + 20, frame.Position.Y.Scale, frame.Position.Y.Offset) }):Play()
         task.wait(0.3)
         notifGui:Destroy()
         restack()
     end
 
-    TweenService:Create(progressBar,
-        TweenInfo.new(duration, Enum.EasingStyle.Linear),
-        { Size = UDim2.new(0, 0, 1, 0) }):Play()
+    TweenService:Create(progressBar, TweenInfo.new(duration, Enum.EasingStyle.Linear), { Size = UDim2.new(0, 0, 1, 0) }):Play()
     task.delay(duration, dismiss)
 
     local clickBtn = Instance.new("TextButton")
@@ -1091,14 +985,8 @@ local function CreateChangelogPanel(parent, windowWidth, panelHeight, panelWidth
     panelClose.ImageColor3 = Arqel.Theme.TextDim
     panelClose.ScaleType = Enum.ScaleType.Fit
     panelClose.Parent = panelHeader
-    panelClose.MouseEnter:Connect(function()
-        TweenService:Create(panelClose, TweenInfo.new(0.15),
-            { ImageColor3 = Arqel.Theme.Error }):Play()
-    end)
-    panelClose.MouseLeave:Connect(function()
-        TweenService:Create(panelClose, TweenInfo.new(0.15),
-            { ImageColor3 = Arqel.Theme.TextDim }):Play()
-    end)
+    panelClose.MouseEnter:Connect(function() TweenService:Create(panelClose, TweenInfo.new(0.15), { ImageColor3 = Arqel.Theme.Error }):Play() end)
+    panelClose.MouseLeave:Connect(function() TweenService:Create(panelClose, TweenInfo.new(0.15), { ImageColor3 = Arqel.Theme.TextDim }):Play() end)
 
     local scrollFrame = Instance.new("ScrollingFrame")
     scrollFrame.Size = UDim2.new(1, 0, 1, -55)
@@ -1114,8 +1002,8 @@ local function CreateChangelogPanel(parent, windowWidth, panelHeight, panelWidth
     local scrollPadding = Instance.new("UIPadding", scrollFrame)
     scrollPadding.PaddingLeft   = UDim.new(0, 10)
     scrollPadding.PaddingRight  = UDim.new(0, 10)
-    scrollPadding.PaddingTop    = UDim.new(0, 5)
-    scrollPadding.PaddingBottom = UDim.new(0, 5)
+    scrollPadding.PaddingTop    = UDim.new(0, 10)
+    scrollPadding.PaddingBottom = UDim.new(0, 10)
 
     local contentLayout = Instance.new("UIListLayout", scrollFrame)
     contentLayout.Padding = UDim.new(0, 10)
@@ -1176,31 +1064,15 @@ local function CreateChangelogPanel(parent, windowWidth, panelHeight, panelWidth
     local function toggle(changelogIcon, container, currentContainerWidth)
         isOpen = not isOpen
         if isOpen then
-            TweenService:Create(panelStroke, TweenInfo.new(0.2),
-                { Transparency = 0.4 }):Play()
-            TweenService:Create(panel,
-                TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
-                { Size = UDim2.new(0, panelWidth, 0, panelHeight) }):Play()
-            TweenService:Create(container,
-                TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
-                { Size = UDim2.new(0, currentContainerWidth + gap + panelWidth, 0, panelHeight) }):Play()
-            if changelogIcon then
-                TweenService:Create(changelogIcon, TweenInfo.new(0.3),
-                    { Rotation = 180 }):Play()
-            end
+            TweenService:Create(panelStroke, TweenInfo.new(0.2), { Transparency = 0.4 }):Play()
+            TweenService:Create(panel, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), { Size = UDim2.new(0, panelWidth, 0, panelHeight) }):Play()
+            TweenService:Create(container, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), { Size = UDim2.new(0, currentContainerWidth + gap + panelWidth, 0, panelHeight) }):Play()
+            if changelogIcon then TweenService:Create(changelogIcon, TweenInfo.new(0.3), { Rotation = 180 }):Play() end
         else
-            TweenService:Create(panelStroke, TweenInfo.new(0.2),
-                { Transparency = 1 }):Play()
-            TweenService:Create(panel,
-                TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
-                { Size = UDim2.new(0, 0, 0, panelHeight) }):Play()
-            TweenService:Create(container,
-                TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
-                { Size = UDim2.new(0, currentContainerWidth, 0, panelHeight) }):Play()
-            if changelogIcon then
-                TweenService:Create(changelogIcon, TweenInfo.new(0.3),
-                    { Rotation = 0 }):Play()
-            end
+            TweenService:Create(panelStroke, TweenInfo.new(0.2), { Transparency = 1 }):Play()
+            TweenService:Create(panel, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), { Size = UDim2.new(0, 0, 0, panelHeight) }):Play()
+            TweenService:Create(container, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), { Size = UDim2.new(0, currentContainerWidth, 0, panelHeight) }):Play()
+            if changelogIcon then TweenService:Create(changelogIcon, TweenInfo.new(0.3), { Rotation = 0 }):Play() end
         end
     end
 
@@ -1212,18 +1084,18 @@ local function CreateChangelogPanel(parent, windowWidth, panelHeight, panelWidth
 end
 
 -- ============================================================
--- USER INFO PANEL
+-- USER INFO PANEL (Cleaned & Fixed)
 -- ============================================================
 local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth, mainFrame, gap, startOpen)
-    panelWidth = panelWidth or 180
+    panelWidth = panelWidth or 200
     local isOpen = startOpen or false
-    local isCompact     = panelHeight < 300
-    local avatarSize    = isCompact and 42 or 55
-    local fieldHeight   = isCompact and 24 or 28
-    local titleSize     = isCompact and 8  or 9
-    local valueSize     = isCompact and 10 or 11
-    local welcomeSize   = isCompact and 11 or 12
-    local spacing       = isCompact and 3  or 5
+    local isCompact     = panelHeight < 380
+    local avatarSize    = isCompact and 42 or 50
+    local fieldHeight   = isCompact and 26 or 32
+    local titleSize     = isCompact and 9  or 10
+    local valueSize     = isCompact and 11 or 13
+    local welcomeSize   = isCompact and 12 or 13
+    local spacing       = 8
 
     local panel = Instance.new("Frame")
     panel.Name = "UserInfoPanel"
@@ -1294,14 +1166,8 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
     panelClose.ImageColor3 = Arqel.Theme.TextDim
     panelClose.ScaleType = Enum.ScaleType.Fit
     panelClose.Parent = panelHeader
-    panelClose.MouseEnter:Connect(function()
-        TweenService:Create(panelClose, TweenInfo.new(0.15),
-            { ImageColor3 = Arqel.Theme.Error }):Play()
-    end)
-    panelClose.MouseLeave:Connect(function()
-        TweenService:Create(panelClose, TweenInfo.new(0.15),
-            { ImageColor3 = Arqel.Theme.TextDim }):Play()
-    end)
+    panelClose.MouseEnter:Connect(function() TweenService:Create(panelClose, TweenInfo.new(0.15), { ImageColor3 = Arqel.Theme.Error }):Play() end)
+    panelClose.MouseLeave:Connect(function() TweenService:Create(panelClose, TweenInfo.new(0.15), { ImageColor3 = Arqel.Theme.TextDim }):Play() end)
 
     local contentFrame = Instance.new("Frame")
     contentFrame.Size = UDim2.new(1, 0, 1, -55)
@@ -1310,14 +1176,16 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
     contentFrame.Parent = panel
 
     local contentPadding = Instance.new("UIPadding", contentFrame)
-    contentPadding.PaddingLeft  = UDim.new(0, 8)
-    contentPadding.PaddingRight = UDim.new(0, 8)
+    contentPadding.PaddingLeft   = UDim.new(0, 12)
+    contentPadding.PaddingRight  = UDim.new(0, 12)
+    contentPadding.PaddingTop    = UDim.new(0, 15)
+    contentPadding.PaddingBottom = UDim.new(0, 15)
 
     local contentLayout = Instance.new("UIListLayout", contentFrame)
     contentLayout.Padding = UDim.new(0, spacing)
     contentLayout.SortOrder = Enum.SortOrder.LayoutOrder
     contentLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    contentLayout.VerticalAlignment   = Enum.VerticalAlignment.Center
+    contentLayout.VerticalAlignment   = Enum.VerticalAlignment.Top
 
     local player = cloneref(Players.LocalPlayer)
 
@@ -1360,11 +1228,7 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
     avatarImage.ScaleType = Enum.ScaleType.Crop
     avatarImage.Parent = avatarContainer
     pcall(function()
-        local content = Players:GetUserThumbnailAsync(
-            player and player.UserId or 0,
-            Enum.ThumbnailType.HeadShot,
-            Enum.ThumbnailSize.Size150x150
-        )
+        local content = Players:GetUserThumbnailAsync(player and player.UserId or 0, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
         avatarImage.Image = content
     end)
 
@@ -1380,9 +1244,7 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
     welcomeLabel.Parent = contentFrame
 
     local divider1 = Instance.new("Frame")
-    divider1.Size = UDim2.new(1, 16, 0, 2)
-    divider1.Position = UDim2.new(0.5, 0, 0, 0)
-    divider1.AnchorPoint = Vector2.new(0.5, 0)
+    divider1.Size = UDim2.new(1, 0, 0, 1)
     divider1.BackgroundColor3 = Arqel.Theme.Divider
     divider1.BorderSizePixel = 0
     divider1.LayoutOrder = 3
@@ -1395,7 +1257,7 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
     executorContainer.Parent = contentFrame
 
     local executorTitle = Instance.new("TextLabel")
-    executorTitle.Size = UDim2.new(1, 0, 0, 11)
+    executorTitle.Size = UDim2.new(1, 0, 0, 12)
     executorTitle.BackgroundTransparency = 1
     executorTitle.Text = "Executor"
     executorTitle.TextColor3 = Arqel.Theme.TextDim
@@ -1406,7 +1268,7 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
 
     local executorValue = Instance.new("TextLabel")
     executorValue.Size = UDim2.new(1, 0, 0, 14)
-    executorValue.Position = UDim2.new(0, 0, 0, 11)
+    executorValue.Position = UDim2.new(0, 0, 0, 14)
     executorValue.BackgroundTransparency = 1
     executorValue.Text = getExecutorName()
     executorValue.TextColor3 = Arqel.Theme.Accent
@@ -1423,7 +1285,7 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
     deviceContainer.Parent = contentFrame
 
     local deviceTitle = Instance.new("TextLabel")
-    deviceTitle.Size = UDim2.new(1, 0, 0, 11)
+    deviceTitle.Size = UDim2.new(1, 0, 0, 12)
     deviceTitle.BackgroundTransparency = 1
     deviceTitle.Text = "Device"
     deviceTitle.TextColor3 = Arqel.Theme.TextDim
@@ -1434,7 +1296,7 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
 
     local deviceValue = Instance.new("TextLabel")
     deviceValue.Size = UDim2.new(1, 0, 0, 14)
-    deviceValue.Position = UDim2.new(0, 0, 0, 11)
+    deviceValue.Position = UDim2.new(0, 0, 0, 14)
     deviceValue.BackgroundTransparency = 1
     deviceValue.Text = getDeviceType()
     deviceValue.TextColor3 = Arqel.Theme.Accent
@@ -1445,9 +1307,7 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
     deviceValue.Parent = deviceContainer
 
     local divider2 = Instance.new("Frame")
-    divider2.Size = UDim2.new(1, 16, 0, 2)
-    divider2.Position = UDim2.new(0.5, 0, 0, 0)
-    divider2.AnchorPoint = Vector2.new(0.5, 0)
+    divider2.Size = UDim2.new(1, 0, 0, 1)
     divider2.BackgroundColor3 = Arqel.Theme.Divider
     divider2.BorderSizePixel = 0
     divider2.LayoutOrder = 6
@@ -1460,7 +1320,7 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
     hwidContainer.Parent = contentFrame
 
     local hwidTitle = Instance.new("TextLabel")
-    hwidTitle.Size = UDim2.new(1, 0, 0, 11)
+    hwidTitle.Size = UDim2.new(1, 0, 0, 12)
     hwidTitle.BackgroundTransparency = 1
     hwidTitle.Text = "HWID"
     hwidTitle.TextColor3 = Arqel.Theme.TextDim
@@ -1470,17 +1330,17 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
     hwidTitle.Parent = hwidContainer
 
     local fullHWID       = getHWID()
-    local copyBtnSize    = 18
-    local dotAreaWidth   = panelWidth - 16 - copyBtnSize - 6
-    local hiddenDots     = generateHiddenDots(dotAreaWidth, 5)
+    local copyBtnSize    = 16
+    local dotAreaWidth   = panelWidth - 24 - copyBtnSize - 6
+    local hiddenDots     = generateHiddenDots(dotAreaWidth, 6) -- fix dots overflow
 
     local hwidValue = Instance.new("TextLabel")
     hwidValue.Size = UDim2.new(1, -(copyBtnSize + 6), 0, 14)
-    hwidValue.Position = UDim2.new(0, 0, 0, 11)
+    hwidValue.Position = UDim2.new(0, 0, 0, 14)
     hwidValue.BackgroundTransparency = 1
     hwidValue.Text = hiddenDots
     hwidValue.TextColor3 = Arqel.Theme.TextDim
-    hwidValue.TextSize = isCompact and 9 or 10
+    hwidValue.TextSize = valueSize
     hwidValue.Font = Enum.Font.GothamBold
     hwidValue.TextXAlignment = Enum.TextXAlignment.Left
     hwidValue.TextTruncate = Enum.TextTruncate.AtEnd
@@ -1488,50 +1348,38 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
 
     local copyBtn = Instance.new("ImageButton")
     copyBtn.Size = UDim2.new(0, copyBtnSize, 0, copyBtnSize)
-    copyBtn.Position = UDim2.new(1, 0, 0.5, 1)
+    copyBtn.Position = UDim2.new(1, 0, 0.5, 5)
     copyBtn.AnchorPoint = Vector2.new(1, 0.5)
     copyBtn.BackgroundTransparency = 1
     copyBtn.Image = getIcon("copy")
     copyBtn.ImageColor3 = Arqel.Theme.TextDim
     copyBtn.ScaleType = Enum.ScaleType.Fit
     copyBtn.Parent = hwidContainer
-    copyBtn.MouseEnter:Connect(function()
-        TweenService:Create(copyBtn, TweenInfo.new(0.15),
-            { ImageColor3 = Arqel.Theme.Accent }):Play()
-    end)
-    copyBtn.MouseLeave:Connect(function()
-        TweenService:Create(copyBtn, TweenInfo.new(0.15),
-            { ImageColor3 = Arqel.Theme.TextDim }):Play()
-    end)
+    copyBtn.MouseEnter:Connect(function() TweenService:Create(copyBtn, TweenInfo.new(0.15), { ImageColor3 = Arqel.Theme.Accent }):Play() end)
+    copyBtn.MouseLeave:Connect(function() TweenService:Create(copyBtn, TweenInfo.new(0.15), { ImageColor3 = Arqel.Theme.TextDim }):Play() end)
     copyBtn.MouseButton1Click:Connect(function()
         pcall(function() setclipboard(fullHWID) end)
-        TweenService:Create(copyBtn, TweenInfo.new(0.1),
-            { ImageColor3 = Arqel.Theme.Success }):Play()
-        task.delay(0.3, function()
-            TweenService:Create(copyBtn, TweenInfo.new(0.15),
-                { ImageColor3 = Arqel.Theme.TextDim }):Play()
-        end)
+        TweenService:Create(copyBtn, TweenInfo.new(0.1), { ImageColor3 = Arqel.Theme.Success }):Play()
+        task.delay(0.3, function() TweenService:Create(copyBtn, TweenInfo.new(0.15), { ImageColor3 = Arqel.Theme.TextDim }):Play() end)
         Arqel:Notify("Copied", "HWID copied to clipboard", 2, "copy")
     end)
 
     local divider3 = Instance.new("Frame")
-    divider3.Size = UDim2.new(1, 16, 0, 2)
-    divider3.Position = UDim2.new(0.5, 0, 0, 0)
-    divider3.AnchorPoint = Vector2.new(0.5, 0)
+    divider3.Size = UDim2.new(1, 0, 0, 1)
     divider3.BackgroundColor3 = Arqel.Theme.Divider
     divider3.BorderSizePixel = 0
     divider3.LayoutOrder = 8
     divider3.Parent = contentFrame
 
     local clockContainer = Instance.new("Frame")
-    clockContainer.Size = UDim2.new(1, 0, 0, isCompact and 30 or 38)
+    clockContainer.Size = UDim2.new(1, 0, 0, isCompact and 36 or 44)
     clockContainer.BackgroundTransparency = 1
     clockContainer.LayoutOrder = 9
     clockContainer.Parent = contentFrame
 
     local clockRow = Instance.new("Frame")
     clockRow.Size = UDim2.new(1, 0, 0, isCompact and 18 or 22)
-    clockRow.Position = UDim2.new(0.5, -8, 0, 0)
+    clockRow.Position = UDim2.new(0.5, 0, 0, 4)
     clockRow.AnchorPoint = Vector2.new(0.5, 0)
     clockRow.BackgroundTransparency = 1
     clockRow.Parent = clockContainer
@@ -1563,12 +1411,12 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
     clockTimeLabel.Parent = clockRow
 
     local clockDateLabel = Instance.new("TextLabel")
-    clockDateLabel.Size = UDim2.new(1, 0, 0, isCompact and 12 or 14)
-    clockDateLabel.Position = UDim2.new(0, -8, 0, isCompact and 18 or 22)
+    clockDateLabel.Size = UDim2.new(1, 0, 0, 14)
+    clockDateLabel.Position = UDim2.new(0, 0, 0, isCompact and 22 or 26)
     clockDateLabel.BackgroundTransparency = 1
     clockDateLabel.Text = formatDate()
     clockDateLabel.TextColor3 = Arqel.Theme.TextDim
-    clockDateLabel.TextSize = isCompact and 9 or 11
+    clockDateLabel.TextSize = isCompact and 10 or 11
     clockDateLabel.Font = Enum.Font.GothamBold
     clockDateLabel.TextXAlignment = Enum.TextXAlignment.Center
     clockDateLabel.Parent = clockContainer
@@ -1576,9 +1424,7 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
     local clockRunning = true
     task.spawn(function()
         while clockRunning do
-            if not clockTimeLabel or not clockTimeLabel.Parent then
-                clockRunning = false; break
-            end
+            if not clockTimeLabel or not clockTimeLabel.Parent then clockRunning = false; break end
             clockTimeLabel.Text = formatTime12()
             clockDateLabel.Text = formatDate()
             task.wait(1)
@@ -1589,23 +1435,13 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
     local function toggle(userIcon, container, baseWidth)
         isOpen = not isOpen
         if isOpen then
-            TweenService:Create(panelStroke, TweenInfo.new(0.2),
-                { Transparency = 0.4 }):Play()
-            TweenService:Create(panel,
-                TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
-                { Size = UDim2.new(0, panelWidth, 0, panelHeight) }):Play()
-            TweenService:Create(container,
-                TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
-                { Size = UDim2.new(0, baseWidth + gap + panelWidth, 0, panelHeight) }):Play()
+            TweenService:Create(panelStroke, TweenInfo.new(0.2), { Transparency = 0.4 }):Play()
+            TweenService:Create(panel, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), { Size = UDim2.new(0, panelWidth, 0, panelHeight) }):Play()
+            TweenService:Create(container, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), { Size = UDim2.new(0, baseWidth + gap + panelWidth, 0, panelHeight) }):Play()
         else
-            TweenService:Create(panelStroke, TweenInfo.new(0.2),
-                { Transparency = 1 }):Play()
-            TweenService:Create(panel,
-                TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
-                { Size = UDim2.new(0, 0, 0, panelHeight) }):Play()
-            TweenService:Create(container,
-                TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
-                { Size = UDim2.new(0, baseWidth, 0, panelHeight) }):Play()
+            TweenService:Create(panelStroke, TweenInfo.new(0.2), { Transparency = 1 }):Play()
+            TweenService:Create(panel, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), { Size = UDim2.new(0, 0, 0, panelHeight) }):Play()
+            TweenService:Create(container, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), { Size = UDim2.new(0, baseWidth, 0, panelHeight) }):Play()
         end
     end
 
@@ -1617,21 +1453,9 @@ local function CreateUserInfoPanel(parent, windowWidth, panelHeight, panelWidth,
 end
 
 -- ============================================================
--- KEYLESS HANDLER
--- ============================================================
-local function handleKeylessSkip()
-    getgenv().SCRIPT_KEY = "KEYLESS"
-    getgenv().ArqelLoaded = false
-    Arqel:Notify("Access Granted", "Keyless access approved!", 3, "success")
-    task.wait(0.3)
-    if Arqel.Callbacks.OnSuccess then Arqel.Callbacks.OnSuccess() end
-end
-
--- ============================================================
 -- BUILD CENTERED UI
 -- ============================================================
-local function BuildCenteredUI(windowWidth, windowHeight, panelHeight,
-                              userPanelWidth, changelogPanelWidth, gap, buildContent)
+local function BuildCenteredUI(windowWidth, windowHeight, panelHeight, userPanelWidth, changelogPanelWidth, gap, buildContent)
     local gui = buildContent.gui
 
     local container = Instance.new("Frame")
@@ -1683,13 +1507,8 @@ local function BuildCenteredUI(windowWidth, windowHeight, panelHeight,
     })
     tgGrad.Parent = topGlow
 
-    local userPanel, toggleUserPanel, isUserOpen, userPanelActualWidth =
-        CreateUserInfoPanel(container, windowWidth, panelHeight, userPanelWidth,
-                            mainFrame, gap, false)
-
-    local changelogPanel, toggleChangelog, isChangelogOpen, changelogPanelActualWidth =
-        CreateChangelogPanel(container, windowWidth, panelHeight, changelogPanelWidth,
-                             mainFrame, gap)
+    local userPanel, toggleUserPanel, isUserOpen, userPanelActualWidth = CreateUserInfoPanel(container, windowWidth, panelHeight, userPanelWidth, mainFrame, gap, false)
+    local changelogPanel, toggleChangelog, isChangelogOpen, changelogPanelActualWidth = CreateChangelogPanel(container, windowWidth, panelHeight, changelogPanelWidth, mainFrame, gap)
 
     local function getContainerWidth()
         local w = windowWidth
@@ -1745,9 +1564,9 @@ local function BuildKeylessUI()
     enableBlur()
 
     local windowWidth  = 340
-    local windowHeight = 340
-    local userPanelWidth      = 165
-    local changelogPanelWidth = 200
+    local windowHeight = 350
+    local userPanelWidth      = 200
+    local changelogPanelWidth = 220
     local gap = 12
     local pad = 14
 
@@ -1758,8 +1577,7 @@ local function BuildKeylessUI()
     gui.DisplayOrder = 999999
     gui.Parent = hui
 
-    local ui = BuildCenteredUI(windowWidth, windowHeight, windowHeight,
-                               userPanelWidth, changelogPanelWidth, gap, { gui = gui })
+    local ui = BuildCenteredUI(windowWidth, windowHeight, windowHeight, userPanelWidth, changelogPanelWidth, gap, { gui = gui })
     local container  = ui.container
     local main       = ui.mainFrame
     local mainStroke = ui.mainStroke
@@ -1833,18 +1651,12 @@ local function BuildKeylessUI()
     closeBtn.Size = UDim2.fromOffset(30, 32)
     closeBtn.Parent = header
     Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 8)
-    closeBtn.MouseEnter:Connect(function()
-        TweenService:Create(closeBtn, TweenInfo.new(0.15),
-            { BackgroundColor3 = Color3.fromRGB(200, 55, 55) }):Play()
-    end)
-    closeBtn.MouseLeave:Connect(function()
-        TweenService:Create(closeBtn, TweenInfo.new(0.15),
-            { BackgroundColor3 = Color3.fromRGB(28, 28, 28) }):Play()
-    end)
+    closeBtn.MouseEnter:Connect(function() TweenService:Create(closeBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(200, 55, 55) }):Play() end)
+    closeBtn.MouseLeave:Connect(function() TweenService:Create(closeBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(28, 28, 28) }):Play() end)
 
     -- Success card
     local successCard = Instance.new("Frame")
-    successCard.Size = UDim2.new(1, -pad * 2, 0, 70)
+    successCard.Size = UDim2.new(1, -pad * 2, 0, 72)
     successCard.Position = UDim2.new(0, pad, 0, 72)
     successCard.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
     successCard.BorderSizePixel = 0
@@ -1893,7 +1705,7 @@ local function BuildKeylessUI()
     -- Launch button
     local launchBtn = Instance.new("TextButton")
     launchBtn.Size = UDim2.new(1, -pad * 2, 0, 44)
-    launchBtn.Position = UDim2.new(0, pad, 0, 158)
+    launchBtn.Position = UDim2.new(0, pad, 0, 156)
     launchBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     launchBtn.Text = ""; launchBtn.AutoButtonColor = false
     launchBtn.Parent = main
@@ -1926,19 +1738,13 @@ local function BuildKeylessUI()
     lLabel.TextSize = 13; lLabel.Font = Enum.Font.GothamBold
     lLabel.LayoutOrder = 2; lLabel.Parent = lContent
 
-    launchBtn.MouseEnter:Connect(function()
-        TweenService:Create(launchBtn, TweenInfo.new(0.15),
-            { BackgroundColor3 = Color3.fromRGB(230, 230, 230) }):Play()
-    end)
-    launchBtn.MouseLeave:Connect(function()
-        TweenService:Create(launchBtn, TweenInfo.new(0.15),
-            { BackgroundColor3 = Color3.fromRGB(255, 255, 255) }):Play()
-    end)
+    launchBtn.MouseEnter:Connect(function() TweenService:Create(launchBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(230, 230, 230) }):Play() end)
+    launchBtn.MouseLeave:Connect(function() TweenService:Create(launchBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(255, 255, 255) }):Play() end)
 
     -- Footer icons
     local footer = Instance.new("Frame")
-    footer.Size = UDim2.new(1, -pad * 2, 0, 36)
-    footer.Position = UDim2.new(0, pad, 0, 214)
+    footer.Size = UDim2.new(1, -pad * 2, 0, 40)
+    footer.Position = UDim2.new(0, pad, 0, 212)
     footer.BackgroundTransparency = 1
     footer.Parent = main
     local fLay = Instance.new("UIListLayout", footer)
@@ -1960,16 +1766,12 @@ local function BuildKeylessUI()
         ic.BackgroundTransparency = 1; ic.Image = getIcon(iconKey)
         ic.ImageColor3 = color; ic.ScaleType = Enum.ScaleType.Fit; ic.Parent = b
         b.MouseEnter:Connect(function()
-            TweenService:Create(b, TweenInfo.new(0.15),
-                { BackgroundColor3 = Color3.fromRGB(45, 45, 45) }):Play()
-            TweenService:Create(ic, TweenInfo.new(0.15),
-                { ImageColor3 = hover }):Play()
+            TweenService:Create(b, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(45, 45, 45) }):Play()
+            TweenService:Create(ic, TweenInfo.new(0.15), { ImageColor3 = hover }):Play()
         end)
         b.MouseLeave:Connect(function()
-            TweenService:Create(b, TweenInfo.new(0.15),
-                { BackgroundColor3 = Color3.fromRGB(25, 25, 25) }):Play()
-            TweenService:Create(ic, TweenInfo.new(0.15),
-                { ImageColor3 = color }):Play()
+            TweenService:Create(b, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(25, 25, 25) }):Play()
+            TweenService:Create(ic, TweenInfo.new(0.15), { ImageColor3 = color }):Play()
         end)
         return b
     end
@@ -1986,10 +1788,7 @@ local function BuildKeylessUI()
 
     local function closeDoorsThenExit(cb)
         ui.closeAllPanels(userBtn, changelogBtn, function()
-            doors.close(function()
-                task.wait(0.3)
-                if cb then cb() end
-            end)
+            doors.close(function() task.wait(0.3); if cb then cb() end end)
         end)
     end
 
@@ -1997,8 +1796,7 @@ local function BuildKeylessUI()
         Arqel:Notify("Goodbye", "See you next time!", 2, "close")
         closeDoorsThenExit(function()
             fullCleanup()
-            TweenService:Create(container, TweenInfo.new(0.4, Enum.EasingStyle.Quart),
-                { Position = UDim2.new(0.5, 0, -0.5, 0) }):Play()
+            TweenService:Create(container, TweenInfo.new(0.4, Enum.EasingStyle.Quart), { Position = UDim2.new(0.5, 0, -0.5, 0) }):Play()
             task.wait(0.4)
             gui:Destroy()
             if Arqel.Callbacks.OnClose then Arqel.Callbacks.OnClose() end
@@ -2011,8 +1809,7 @@ local function BuildKeylessUI()
         getgenv().ArqelLoaded = false
         closeDoorsThenExit(function()
             disableBlur()
-            TweenService:Create(container, TweenInfo.new(0.4, Enum.EasingStyle.Quart),
-                { Position = UDim2.new(0.5, 0, -0.5, 0) }):Play()
+            TweenService:Create(container, TweenInfo.new(0.4, Enum.EasingStyle.Quart), { Position = UDim2.new(0.5, 0, -0.5, 0) }):Play()
             task.wait(0.4)
             gui:Destroy()
             if not Internal.IsJunkieMode and Arqel.Callbacks.OnSuccess then
@@ -2029,8 +1826,7 @@ local function BuildKeylessUI()
     end)
 
     setupDragging(header, container)
-    TweenService:Create(container, TweenInfo.new(0.5, Enum.EasingStyle.Quart),
-        { Position = UDim2.new(0.5, 0, 0.45, 0) }):Play()
+    TweenService:Create(container, TweenInfo.new(0.5, Enum.EasingStyle.Quart), { Position = UDim2.new(0.5, 0, 0.45, 0) }):Play()
     task.wait(0.6)
     doors.open(function()
         task.wait(0.2)
@@ -2040,7 +1836,7 @@ local function BuildKeylessUI()
 end
 
 -- ============================================================
--- KEY UI
+-- KEY UI (Cleaned & Aligned)
 -- ============================================================
 local function BuildKeyUI()
     local oldGui = hui:FindFirstChild("ArqelKeySystem")
@@ -2053,12 +1849,12 @@ local function BuildKeyUI()
     local scale  = getScale()
 
     local windowWidth  = mobile and math.clamp(400 * scale, 340, 440) or 420
-    local baseHeight   = mobile and math.clamp(430 * scale, 380, 480) or 450
+    local baseHeight   = 380
     local showShop     = isShopEnabled()
     local shopExtra    = showShop and 64 or 0
     local windowHeight = baseHeight + shopExtra
 
-    local userPanelWidth      = 180
+    local userPanelWidth      = 200
     local changelogPanelWidth = 220
     local gap = 12
     local pad = 14
@@ -2071,8 +1867,7 @@ local function BuildKeyUI()
     screenGui.DisplayOrder = 999999
     screenGui.Parent = hui
 
-    local ui = BuildCenteredUI(windowWidth, windowHeight, baseHeight,
-                               userPanelWidth, changelogPanelWidth, gap, { gui = screenGui })
+    local ui = BuildCenteredUI(windowWidth, windowHeight, baseHeight, userPanelWidth, changelogPanelWidth, gap, { gui = screenGui })
     local container  = ui.container
     local mainFrame  = ui.mainFrame
     local mainStroke = ui.mainStroke
@@ -2174,9 +1969,7 @@ local function BuildKeyUI()
     task.spawn(function()
         while premiumBadge.Parent do
             shimmer.Position = UDim2.new(-0.3, 0, 0, 0)
-            TweenService:Create(shimmer,
-                TweenInfo.new(1.6, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
-                { Position = UDim2.new(1.3, 0, 0, 0) }):Play()
+            TweenService:Create(shimmer, TweenInfo.new(1.6, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), { Position = UDim2.new(1.3, 0, 0, 0) }):Play()
             task.wait(3.2)
         end
     end)
@@ -2191,16 +1984,10 @@ local function BuildKeyUI()
     closeBtn.Size = UDim2.fromOffset(30, 32)
     closeBtn.Parent = header
     Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 8)
-    closeBtn.MouseEnter:Connect(function()
-        TweenService:Create(closeBtn, TweenInfo.new(0.15),
-            { BackgroundColor3 = Color3.fromRGB(200, 55, 55) }):Play()
-    end)
-    closeBtn.MouseLeave:Connect(function()
-        TweenService:Create(closeBtn, TweenInfo.new(0.15),
-            { BackgroundColor3 = Color3.fromRGB(28, 28, 28) }):Play()
-    end)
+    closeBtn.MouseEnter:Connect(function() TweenService:Create(closeBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(200, 55, 55) }):Play() end)
+    closeBtn.MouseLeave:Connect(function() TweenService:Create(closeBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(28, 28, 28) }):Play() end)
 
-    -- Helper: build a Promers-style section card
+    -- Section Builders
     local function makeSectionCard(yPos, height)
         local card = Instance.new("Frame")
         card.Size = UDim2.new(1, -pad * 2, 0, height)
@@ -2246,16 +2033,10 @@ local function BuildKeyUI()
 
         task.spawn(function()
             while dGlow.Parent do
-                TweenService:Create(dGlow,
-                    TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
-                    { BackgroundTransparency = 0.95, Size = UDim2.fromOffset(16, 16),
-                      Position = UDim2.new(0, 12, 0.5, -8) }):Play()
+                TweenService:Create(dGlow, TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), { BackgroundTransparency = 0.95, Size = UDim2.fromOffset(16, 16), Position = UDim2.new(0, 12, 0.5, -8) }):Play()
                 task.wait(1.2)
                 if not dGlow.Parent then break end
-                TweenService:Create(dGlow,
-                    TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
-                    { BackgroundTransparency = 0.8, Size = UDim2.fromOffset(12, 12),
-                      Position = UDim2.new(0, 14, 0.5, -6) }):Play()
+                TweenService:Create(dGlow, TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), { BackgroundTransparency = 0.8, Size = UDim2.fromOffset(12, 12), Position = UDim2.new(0, 14, 0.5, -6) }):Play()
                 task.wait(1.2)
             end
         end)
@@ -2273,14 +2054,15 @@ local function BuildKeyUI()
         return h
     end
 
-    -- Status section
+    -- Status Section
     local statusY = 72
-    local statusCard = makeSectionCard(statusY, 68)
+    local statusHeight = 64
+    local statusCard = makeSectionCard(statusY, statusHeight)
     makeSectionHeader(statusCard, "Status")
 
     local statusRow = Instance.new("Frame")
-    statusRow.Size = UDim2.new(1, -28, 0, 30)
-    statusRow.Position = UDim2.new(0, 14, 0, 30)
+    statusRow.Size = UDim2.new(1, -28, 0, 26)
+    statusRow.Position = UDim2.new(0, 14, 0, 28)
     statusRow.BackgroundTransparency = 1
     statusRow.Parent = statusCard
 
@@ -2305,13 +2087,14 @@ local function BuildKeyUI()
     statusLabel.TextTruncate = Enum.TextTruncate.AtEnd
     statusLabel.Parent = statusRow
 
-    -- Input section
-    local inputY = statusY + 80
-    local inputCard = makeSectionCard(inputY, 84)
+    -- Input Section
+    local inputY = statusY + statusHeight + 12
+    local inputHeight = 80
+    local inputCard = makeSectionCard(inputY, inputHeight)
     makeSectionHeader(inputCard, "Access Key")
 
     local wrap = Instance.new("Frame")
-    wrap.Size = UDim2.new(1, -28, 0, 36)
+    wrap.Size = UDim2.new(1, -28, 0, 34)
     wrap.Position = UDim2.new(0, 14, 0, 32)
     wrap.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
     wrap.BorderSizePixel = 0
@@ -2334,7 +2117,7 @@ local function BuildKeyUI()
     penIcon.TextSize = 14
     penIcon.Font = Enum.Font.GothamBold
     penIcon.Position = UDim2.new(0, 10, 0, 0)
-    penIcon.Size = UDim2.fromOffset(20, 36)
+    penIcon.Size = UDim2.fromOffset(20, 34)
     penIcon.Parent = wrap
 
     local textBox = Instance.new("TextBox")
@@ -2352,28 +2135,24 @@ local function BuildKeyUI()
     textBox.Parent = wrap
 
     textBox.Focused:Connect(function()
-        TweenService:Create(wrapStroke, TweenInfo.new(0.2),
-            { Color = Color3.fromRGB(255, 255, 255), Transparency = 0 }):Play()
-        TweenService:Create(wrap, TweenInfo.new(0.2),
-            { BackgroundColor3 = Color3.fromRGB(40, 40, 40) }):Play()
-        TweenService:Create(penIcon, TweenInfo.new(0.2),
-            { TextColor3 = Color3.fromRGB(255, 255, 255) }):Play()
+        TweenService:Create(wrapStroke, TweenInfo.new(0.2), { Color = Color3.fromRGB(255, 255, 255), Transparency = 0 }):Play()
+        TweenService:Create(wrap, TweenInfo.new(0.2), { BackgroundColor3 = Color3.fromRGB(40, 40, 40) }):Play()
+        TweenService:Create(penIcon, TweenInfo.new(0.2), { TextColor3 = Color3.fromRGB(255, 255, 255) }):Play()
     end)
     textBox.FocusLost:Connect(function()
-        TweenService:Create(wrapStroke, TweenInfo.new(0.2),
-            { Color = Color3.fromRGB(60, 60, 60), Transparency = 0.3 }):Play()
-        TweenService:Create(wrap, TweenInfo.new(0.2),
-            { BackgroundColor3 = Color3.fromRGB(25, 25, 25) }):Play()
-        TweenService:Create(penIcon, TweenInfo.new(0.2),
-            { TextColor3 = Color3.fromRGB(130, 130, 130) }):Play()
+        TweenService:Create(wrapStroke, TweenInfo.new(0.2), { Color = Color3.fromRGB(60, 60, 60), Transparency = 0.3 }):Play()
+        TweenService:Create(wrap, TweenInfo.new(0.2), { BackgroundColor3 = Color3.fromRGB(25, 25, 25) }):Play()
+        TweenService:Create(penIcon, TweenInfo.new(0.2), { TextColor3 = Color3.fromRGB(130, 130, 130) }):Play()
     end)
 
     -- Buttons
-    local btnY = inputY + 96
+    local btnY = inputY + inputHeight + 12
+    local btnGap = 10
+    local btnHeight = 44
 
     local function promersButton(parent, title, iconKey, isPrimary, xPos, wPos)
         local btn = Instance.new("TextButton")
-        btn.Size = wPos or UDim2.new(1, 0, 0, 40)
+        btn.Size = wPos or UDim2.new(1, 0, 0, btnHeight)
         btn.Position = UDim2.new(0, xPos or pad, 0, btnY)
         btn.BackgroundColor3 = isPrimary and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(35, 35, 35)
         btn.Text = ""; btn.AutoButtonColor = false; btn.ClipsDescendants = true
@@ -2381,9 +2160,7 @@ local function BuildKeyUI()
         Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
 
         local grad = Instance.new("UIGradient")
-        grad.Color = isPrimary
-            and ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(220, 220, 220))
-            or  ColorSequence.new(Color3.fromRGB(45, 45, 45), Color3.fromRGB(20, 20, 20))
+        grad.Color = isPrimary and ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(220, 220, 220)) or ColorSequence.new(Color3.fromRGB(45, 45, 45), Color3.fromRGB(20, 20, 20))
         grad.Rotation = 135; grad.Parent = btn
 
         local st = Instance.new("UIStroke", btn)
@@ -2403,7 +2180,7 @@ local function BuildKeyUI()
         lay.Padding = UDim.new(0, 8)
 
         local ic = Instance.new("ImageLabel")
-        ic.Size = UDim2.fromOffset(16, 16); ic.BackgroundTransparency = 1
+        ic.Size = UDim2.fromOffset(18, 18); ic.BackgroundTransparency = 1
         ic.Image = getIcon(iconKey)
         ic.ImageColor3 = isPrimary and Color3.fromRGB(15, 15, 15) or Color3.fromRGB(255, 255, 255)
         ic.ScaleType = Enum.ScaleType.Fit
@@ -2414,22 +2191,18 @@ local function BuildKeyUI()
         lb.BackgroundTransparency = 1
         lb.Text = title
         lb.TextColor3 = isPrimary and Color3.fromRGB(15, 15, 15) or Color3.fromRGB(255, 255, 255)
-        lb.TextSize = 12; lb.Font = Enum.Font.GothamBold
+        lb.TextSize = 13; lb.Font = Enum.Font.GothamBold
         lb.LayoutOrder = 2; lb.Parent = content
 
         local orig  = btn.BackgroundColor3
         local hover = isPrimary and Color3.fromRGB(230, 230, 230) or Color3.fromRGB(55, 55, 55)
         btn.MouseEnter:Connect(function()
-            TweenService:Create(btn, TweenInfo.new(0.15),
-                { BackgroundColor3 = hover }):Play()
-            TweenService:Create(st, TweenInfo.new(0.15),
-                { Transparency = 0 }):Play()
+            TweenService:Create(btn, TweenInfo.new(0.15), { BackgroundColor3 = hover }):Play()
+            TweenService:Create(st, TweenInfo.new(0.15), { Transparency = 0 }):Play()
         end)
         btn.MouseLeave:Connect(function()
-            TweenService:Create(btn, TweenInfo.new(0.15),
-                { BackgroundColor3 = orig }):Play()
-            TweenService:Create(st, TweenInfo.new(0.15),
-                { Transparency = isPrimary and 0 or 0.2 }):Play()
+            TweenService:Create(btn, TweenInfo.new(0.15), { BackgroundColor3 = orig }):Play()
+            TweenService:Create(st, TweenInfo.new(0.15), { Transparency = isPrimary and 0 or 0.2 }):Play()
         end)
 
         return btn
@@ -2439,23 +2212,29 @@ local function BuildKeyUI()
     local acquireBtn = promersButton(mainFrame,
         noKey and "Unavailable" or "Get Key",
         noKey and "nogetkey" or "key",
-        false, pad, UDim2.new(0.5, -pad - 4, 0, 40))
+        false, pad, UDim2.new(0.5, -pad - (btnGap / 2), 0, btnHeight))
+    
     if noKey then
         acquireBtn.Active = false
-        acquireBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        acquireBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        acquireBtn.BackgroundTransparency = 0.5
+        local lb = acquireBtn:FindFirstChild("TextLabel", true)
+        if lb then lb.TextColor3 = Color3.fromRGB(150, 150, 150) end
+        local ic = acquireBtn:FindFirstChild("ImageLabel", true)
+        if ic then ic.ImageColor3 = Color3.fromRGB(150, 150, 150) end
     end
 
     local redeemBtn = promersButton(mainFrame, "Redeem Key", "shield", true,
-        0, UDim2.new(0.5, 4, 0, 40))
-    redeemBtn.Position = UDim2.new(0.5, 4, 0, btnY)
+        0, UDim2.new(0.5, -pad - (btnGap / 2), 0, btnHeight))
+    redeemBtn.Position = UDim2.new(0.5, btnGap / 2, 0, btnY)
 
     -- Shop
     local shopOffset = 0
+    local currentY = btnY + btnHeight + 16
     if showShop then
-        local shopY = btnY + 52
         local shop = Instance.new("Frame")
         shop.Size = UDim2.new(1, -pad * 2, 0, 52)
-        shop.Position = UDim2.new(0, pad, 0, shopY)
+        shop.Position = UDim2.new(0, pad, 0, currentY)
         shop.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
         shop.BorderSizePixel = 0
         shop.Parent = mainFrame
@@ -2502,28 +2281,21 @@ local function BuildKeyUI()
         buyBtn.Font = Enum.Font.GothamBold; buyBtn.TextSize = 11
         buyBtn.AutoButtonColor = false; buyBtn.Parent = shop
         Instance.new("UICorner", buyBtn).CornerRadius = UDim.new(0, 6)
-        buyBtn.MouseEnter:Connect(function()
-            TweenService:Create(buyBtn, TweenInfo.new(0.15),
-                { BackgroundColor3 = Color3.fromRGB(230, 230, 230) }):Play()
-        end)
-        buyBtn.MouseLeave:Connect(function()
-            TweenService:Create(buyBtn, TweenInfo.new(0.15),
-                { BackgroundColor3 = Color3.fromRGB(255, 255, 255) }):Play()
-        end)
+        buyBtn.MouseEnter:Connect(function() TweenService:Create(buyBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(230, 230, 230) }):Play() end)
+        buyBtn.MouseLeave:Connect(function() TweenService:Create(buyBtn, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(255, 255, 255) }):Play() end)
         buyBtn.MouseButton1Click:Connect(function()
             if Arqel.Shop.Link ~= "" then
                 pcall(setclipboard, Arqel.Shop.Link)
                 Arqel:Notify("Shop", "Link copied!", 2, "copy")
             end
         end)
-        shopOffset = 64
+        currentY = currentY + 52 + 12
     end
 
     -- Footer icons
-    local footerY = btnY + 52 + shopOffset
     local footer = Instance.new("Frame")
-    footer.Size = UDim2.new(1, -pad * 2, 0, 36)
-    footer.Position = UDim2.new(0, pad, 0, footerY)
+    footer.Size = UDim2.new(1, -pad * 2, 0, 40)
+    footer.Position = UDim2.new(0, pad, 0, currentY)
     footer.BackgroundTransparency = 1
     footer.Parent = mainFrame
 
@@ -2535,7 +2307,7 @@ local function BuildKeyUI()
 
     local function iconBtn(iconKey, color, hover)
         local b = Instance.new("TextButton")
-        b.Size = UDim2.fromOffset(36, 36)
+        b.Size = UDim2.fromOffset(40, 40)
         b.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
         b.BorderSizePixel = 0; b.Text = ""; b.AutoButtonColor = false
         b.Parent = footer
@@ -2543,24 +2315,20 @@ local function BuildKeyUI()
         local st = Instance.new("UIStroke", b)
         st.Color = Color3.fromRGB(60, 60, 60); st.Thickness = 1; st.Transparency = 0.5
         local ic = Instance.new("ImageLabel")
-        ic.Size = UDim2.fromOffset(16, 16)
-        ic.Position = UDim2.new(0.5, -8, 0.5, -8)
+        ic.Size = UDim2.fromOffset(18, 18)
+        ic.Position = UDim2.new(0.5, -9, 0.5, -9)
         ic.BackgroundTransparency = 1
         ic.Image = getIcon(iconKey)
         ic.ImageColor3 = color
         ic.ScaleType = Enum.ScaleType.Fit
         ic.Parent = b
         b.MouseEnter:Connect(function()
-            TweenService:Create(b, TweenInfo.new(0.15),
-                { BackgroundColor3 = Color3.fromRGB(45, 45, 45) }):Play()
-            TweenService:Create(ic, TweenInfo.new(0.15),
-                { ImageColor3 = hover }):Play()
+            TweenService:Create(b, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(45, 45, 45) }):Play()
+            TweenService:Create(ic, TweenInfo.new(0.15), { ImageColor3 = hover }):Play()
         end)
         b.MouseLeave:Connect(function()
-            TweenService:Create(b, TweenInfo.new(0.15),
-                { BackgroundColor3 = Color3.fromRGB(25, 25, 25) }):Play()
-            TweenService:Create(ic, TweenInfo.new(0.15),
-                { ImageColor3 = color }):Play()
+            TweenService:Create(b, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(25, 25, 25) }):Play()
+            TweenService:Create(ic, TweenInfo.new(0.15), { ImageColor3 = color }):Play()
         end)
         return b
     end
@@ -2570,7 +2338,6 @@ local function BuildKeyUI()
     local changelogBtn = iconBtn("changelog", Color3.fromRGB(150, 150, 150), Color3.fromRGB(255, 255, 255))
     if #Arqel.Changelog == 0 then changelogBtn.Visible = false end
 
-    -- Doors + events
     local doors = CreateDoorOverlay(mainFrame, windowWidth, windowHeight)
 
     userBtn.MouseButton1Click:Connect(function() ui.toggleUser(userBtn) end)
@@ -2589,12 +2356,9 @@ local function BuildKeyUI()
         Arqel:Notify("Goodbye", "See you next time!", 2, "close")
         closeDoorsThenExit(function()
             fullCleanup()
-            TweenService:Create(container, TweenInfo.new(0.4, Enum.EasingStyle.Quart),
-                { Position = UDim2.new(0.5, 0, -0.5, 0) }):Play()
-            TweenService:Create(mainFrame, TweenInfo.new(0.3),
-                { BackgroundTransparency = 1 }):Play()
-            TweenService:Create(mainStroke, TweenInfo.new(0.3),
-                { Transparency = 1 }):Play()
+            TweenService:Create(container, TweenInfo.new(0.4, Enum.EasingStyle.Quart), { Position = UDim2.new(0.5, 0, -0.5, 0) }):Play()
+            TweenService:Create(mainFrame, TweenInfo.new(0.3), { BackgroundTransparency = 1 }):Play()
+            TweenService:Create(mainStroke, TweenInfo.new(0.3), { Transparency = 1 }):Play()
             task.wait(0.4)
             screenGui:Destroy()
             if Arqel.Callbacks.OnClose then Arqel.Callbacks.OnClose() end
@@ -2624,25 +2388,20 @@ local function BuildKeyUI()
             end)
             local dots, i = {".", "..", "...", ""}, 1
             dotsThread = task.spawn(function()
-                while statusLabel and statusLabel.Parent
-                      and statusLabel.Text:find("Verifying", 1, true) do
+                while statusLabel and statusLabel.Parent and statusLabel.Text:find("Verifying", 1, true) do
                     statusLabel.Text = text .. dots[i]
                     i = (i % #dots) + 1
                     task.wait(0.4)
                 end
             end)
         elseif state == "success" then
-            color, icon, text = Arqel.Theme.Success, getIcon("check"),
-                customText or "Access Granted"
+            color, icon, text = Arqel.Theme.Success, getIcon("check"), customText or "Access Granted"
         elseif state == "error" then
-            color, icon, text = Arqel.Theme.Error, getIcon("alert"),
-                customText or "Invalid Key"
+            color, icon, text = Arqel.Theme.Error, getIcon("alert"), customText or "Invalid Key"
         end
 
-        TweenService:Create(statusLabel, TweenInfo.new(0.3),
-            { TextColor3 = color }):Play()
-        TweenService:Create(statusIcon, TweenInfo.new(0.3),
-            { ImageColor3 = color }):Play()
+        TweenService:Create(statusLabel, TweenInfo.new(0.3), { TextColor3 = color }):Play()
+        TweenService:Create(statusIcon, TweenInfo.new(0.3), { ImageColor3 = color }):Play()
         statusLabel.Text = text
         statusIcon.Image = icon
     end
@@ -2679,9 +2438,7 @@ local function BuildKeyUI()
                     local errCode = result.error or "Unknown"
                     errorMsg = errMsgs[errCode] or result.message or errCode
                     if errCode == "HWID_BANNED" then
-                        task.delay(2, function()
-                            cloneref(Players.LocalPlayer):Kick("Hardware banned")
-                        end)
+                        task.delay(2, function() cloneref(Players.LocalPlayer):Kick("Hardware banned") end)
                     end
                 elseif type(result) == "boolean" then
                     valid = result
@@ -2700,10 +2457,8 @@ local function BuildKeyUI()
             task.wait(1)
             closeDoorsThenExit(function()
                 disableBlur()
-                TweenService:Create(container, TweenInfo.new(0.4, Enum.EasingStyle.Quart),
-                    { Position = UDim2.new(0.5, 0, -0.5, 0) }):Play()
-                TweenService:Create(mainFrame, TweenInfo.new(0.3),
-                    { BackgroundTransparency = 1 }):Play()
+                TweenService:Create(container, TweenInfo.new(0.4, Enum.EasingStyle.Quart), { Position = UDim2.new(0.5, 0, -0.5, 0) }):Play()
+                TweenService:Create(mainFrame, TweenInfo.new(0.3), { BackgroundTransparency = 1 }):Play()
                 task.wait(0.4)
                 screenGui:Destroy()
                 if not Internal.IsJunkieMode and Arqel.Callbacks.OnSuccess then
@@ -2742,8 +2497,7 @@ local function BuildKeyUI()
     textBox.FocusLost:Connect(function(enter) if enter then handleRedeem() end end)
 
     setupDragging(header, container)
-    TweenService:Create(container, TweenInfo.new(0.5, Enum.EasingStyle.Quart),
-        { Position = UDim2.new(0.5, 0, 0.45, 0) }):Play()
+    TweenService:Create(container, TweenInfo.new(0.5, Enum.EasingStyle.Quart), { Position = UDim2.new(0.5, 0, 0.45, 0) }):Play()
     task.wait(0.6)
     doors.open(function()
         task.wait(0.2)
@@ -2758,6 +2512,14 @@ end
 -- ============================================================
 -- PUBLIC LAUNCH API
 -- ============================================================
+local function handleKeylessSkip()
+    getgenv().SCRIPT_KEY = "KEYLESS"
+    getgenv().ArqelLoaded = false
+    Arqel:Notify("Access Granted", "Keyless access approved!", 3, "success")
+    task.wait(0.3)
+    if Arqel.Callbacks.OnSuccess then Arqel.Callbacks.OnSuccess() end
+end
+
 function Arqel:Launch()
     Internal.IsJunkieMode     = false
     Internal.ValidateFunction = Arqel.Callbacks.OnVerify
@@ -2768,8 +2530,7 @@ function Arqel:Launch()
             Arqel:Notify("Executed", "Script loaded successfully!", 2, "success")
             if Arqel.Callbacks.OnSuccess then Arqel.Callbacks.OnSuccess() end
             return
-        elseif Internal.ValidateFunction
-               and validateKey(existingKey, Internal.ValidateFunction) then
+        elseif Internal.ValidateFunction and validateKey(existingKey, Internal.ValidateFunction) then
             Arqel:Notify("Executed", "Script loaded successfully!", 2, "success")
             if Arqel.Callbacks.OnSuccess then Arqel.Callbacks.OnSuccess() end
             return
@@ -2814,8 +2575,7 @@ function Arqel:Launch()
 end
 
 function Arqel:LaunchJunkie(config)
-    assert(config and config.Service and config.Identifier and config.Provider,
-        "Config required: Service, Identifier, Provider")
+    assert(config and config.Service and config.Identifier and config.Provider, "Config required: Service, Identifier, Provider")
     Internal.IsJunkieMode = true
 
     local existingKey = getgenv().SCRIPT_KEY
@@ -2839,16 +2599,13 @@ function Arqel:LaunchJunkie(config)
         Junkie.service    = config.Service
         Junkie.identifier = config.Identifier
         Junkie.provider   = config.Provider
-
-        Internal.Junkie = Junkie
+        Internal.Junkie   = Junkie
 
         if Arqel.Links.GetKey == "" then
             pcall(function() Arqel.Links.GetKey = Junkie.get_key_link() end)
         end
 
-        Internal.ValidateFunction = function(key)
-            return Junkie.check_key(key)
-        end
+        Internal.ValidateFunction = function(key) return Junkie.check_key(key) end
 
         if Arqel.Options.Keyless == nil then
             local ks, kr = pcall(function() return Junkie.check_key("KEYLESS") end)
